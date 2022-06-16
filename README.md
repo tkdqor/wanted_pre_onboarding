@@ -6,13 +6,14 @@
 
 ### 📌 초기 모델링 및 설정 
 - **wanted라는 이름의 프로젝트를 가상환경에서 시작하고 employment라는 이름의 App 생성 / RDBMS는 django 기본인 sqlite3로 활용**
-<img width="1056" alt="image" src="https://user-images.githubusercontent.com/95380638/173993193-3640c348-ce18-46ec-a208-6622c9d62240.png">
+<img width="1026" alt="image" src="https://user-images.githubusercontent.com/95380638/174075249-bb46631d-3b6c-42d8-874d-8015af5d7f2c.png">
 
-- **models.py에서 Company와 JobPosting이라는 이름으로 각각 회사와 채용공고에 해당하는 모델 생성, django 기본 모델인 User로 사용자 모델 대체**
-  - Company 모델과 JobPosting 모델은 1:N관계로 설정
-  - User 모델과 JobPosting 모델은 1:1관계로 설정
+- **models.py에서 Company와 JobPosting이라는 이름으로 각각 회사와 채용공고에 해당하는 모델 생성, django 기본 모델인 User로 사용자 모델 대체. ApplicationStatus라는 모델로 채용공고 지원 내역 모델 생성**
+  - Company 모델과 JobPosting 모델은 1:N 관계로 설정
+  - User 모델과 JobPosting 모델은 M:N 관계로 설정
+  - User 모델 및 JobPosting 모델은 ApplicationStatus 모델과 1:N관계 설정 
 
-<img width="1423" alt="image" src="https://user-images.githubusercontent.com/95380638/173993344-cd0b3a07-c83c-4a76-9b16-eb0d475337d6.png">
+<img width="1426" alt="image" src="https://user-images.githubusercontent.com/95380638/174075590-d688f0bc-5054-4e76-b489-c46c8fdf5068.png">
 
 - django 기본 어드민 페이지를 이용해서 DB 데이터 생성 진행
 
