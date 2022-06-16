@@ -62,8 +62,9 @@ class JobPostingAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)    
 
 
-# 사용자 채용공고 현황 View
+# 사용자 채용공고 현황 및 지원 View
 class UserApplyAPIView(APIView):
+    # GET 방식일 떄는 채용공고 지원 현황 보여주기
     def get(self, request):
         # 사용자가 로그인 되었을 경우에만 해당 API 데이터 보여주기
         if request.user.is_authenticated:
@@ -74,6 +75,7 @@ class UserApplyAPIView(APIView):
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)    
     
+    # POST 방식일 떄는 채용공고 지원 기능 구현
     def post(self, request):
         serializer = UserApplyCreateSerializer(data=request.data)
         if serializer.is_valid():
