@@ -1,0 +1,13 @@
+from django.contrib import admin
+from .models import Company, JobPosting
+
+# Company 모델 어드민 페이지에 등록
+@admin.register(Company)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'country', 'region']
+
+
+# JobPosting 모델 어드민 페이지에 등록
+@admin.register(JobPosting)
+class JobPostingAdmin(admin.ModelAdmin):
+    list_display = ['id', 'company', 'position', 'compensation', 'content', 'stack', 'created_at', 'updated_at']
