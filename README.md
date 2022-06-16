@@ -6,13 +6,14 @@
 
 ### 📌 초기 모델링 및 설정 
 - **wanted라는 이름의 프로젝트를 가상환경에서 시작하고 employment라는 이름의 App 생성 / RDBMS는 django 기본인 sqlite3로 활용**
-<img width="1056" alt="image" src="https://user-images.githubusercontent.com/95380638/173993193-3640c348-ce18-46ec-a208-6622c9d62240.png">
+<img width="1026" alt="image" src="https://user-images.githubusercontent.com/95380638/174075249-bb46631d-3b6c-42d8-874d-8015af5d7f2c.png">
 
-- **models.py에서 Company와 JobPosting이라는 이름으로 각각 회사와 채용공고에 해당하는 모델 생성, django 기본 모델인 User로 사용자 모델 대체**
-  - Company 모델과 JobPosting 모델은 1:N관계로 설정
-  - User 모델과 JobPosting 모델은 1:1관계로 설정
+- **models.py에서 Company와 JobPosting이라는 이름으로 각각 회사와 채용공고에 해당하는 모델 생성, django 기본 모델인 User로 사용자 모델 대체. ApplicationStatus라는 모델로 채용공고 지원 내역 모델 생성**
+  - Company 모델과 JobPosting 모델은 1:N 관계로 설정
+  - User 모델과 JobPosting 모델은 M:N 관계로 설정
+  - User 모델 및 JobPosting 모델은 ApplicationStatus 모델과 1:N관계 설정 
 
-<img width="1423" alt="image" src="https://user-images.githubusercontent.com/95380638/173993344-cd0b3a07-c83c-4a76-9b16-eb0d475337d6.png">
+<img width="1426" alt="image" src="https://user-images.githubusercontent.com/95380638/174075590-d688f0bc-5054-4e76-b489-c46c8fdf5068.png">
 
 - django 기본 어드민 페이지를 이용해서 DB 데이터 생성 진행
 
@@ -220,4 +221,42 @@ sqlparse            0.4.2
 - **구현 결과**
 
 <img width="1214" alt="image" src="https://user-images.githubusercontent.com/95380638/174000719-40c49624-dbdf-4b1d-b21a-72afb4094dde.png">
+
+<br>
+
+### 📌 (7) 채용공고 지원 API
+- **요구사항 : 사용자가 원하는 특정 채용공고에 지원하는 JSON 형태의 id 값을 넣으면 채용공고 id와 사용자 id값을 함께 볼 수 있도록 설정**
+
+- **구현 과정**
+
+<img width="1018" alt="image" src="https://user-images.githubusercontent.com/95380638/174072486-2186a43d-616f-42c6-b1f2-388b5242843d.png">
+ 
+- **models.py에서 ApplicationStatus라는 채용공고 지원 내역을 볼 수 있는 모델 생성**
+  - 먼저 기존의 JobPosting 모델에 user 필드를 생성하고 ManyToManyField 필드로 M:N 관계 설정 
+    - 1명의 사용자는 여러개의 채용공고에 지원할 수 있고, 1개의 채용공고는 여러명이 지원할 수 있기 때문
+  - 그리고 ApplicationStatus라는 모델을 생성해서 User 모델과 JobPosting 모델 각각 1:N관계 설정
+    - 이렇게 설정해서 해당 모델에는 User 모델 id 값과 JobPosting id 값을 볼 수 있도록 하기
+
+<img width="580" alt="image" src="https://user-images.githubusercontent.com/95380638/174073337-8e14cf29-cee5-4504-b9da-2ce0e1e176b9.png">
+
+- **serializers.py에서는 사용자가 채용공고 현황을 조회할 수 있는 UserApplySerializer를 생성하고 채용공고에 지원할 수 있는 UserApplyCreateSerializer 생성**
+  - 둘 다 ApplicationStatus 모델을 설정하고 채용공고 id 값과 사용자 id 값을 볼 수 있도록 설정
+
+<img width="921" alt="image" src="https://user-images.githubusercontent.com/95380638/174073784-f55e3797-620d-4baf-a3f6-0bab48056e16.png">
+
+- **views.py에서는 사용자가 채용공고 현황을 보고 지원할 수 있는 UserApplyAPIView 생성**
+  - GET 방식에서는 사용자가 로그인 되었을 때, 로그인된 사용자의 id로 필터링해서 모델 데이터 보여주기
+  - POST 방식에서는 입력된 JSON 데이터를 UserApplyCreateSerializer에 보내고 유효성 검사 진행
+
+- **urls.py에서는 jobpostings/user/ 라는 URL로 설정**
+
+- **구현 결과**
+
+<img width="1234" alt="image" src="https://user-images.githubusercontent.com/95380638/174074526-51c08194-0911-40c4-aa24-b29c19fca148.png">
+
+- **로그인 시, 채용공고 지원 현황 보여주기**
+
+<img width="1217" alt="image" src="https://user-images.githubusercontent.com/95380638/174074787-c4a6771b-6932-4263-b0db-4ebb0601562b.png">
+
+- **JSON 데이터로 입력하면 채용공고 지원하기**
 
