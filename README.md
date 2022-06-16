@@ -201,3 +201,23 @@ sqlparse            0.4.2
 - **구현 결과**
 
 <img width="1199" alt="image" src="https://user-images.githubusercontent.com/95380638/173999691-8ae7ac12-24c2-4b24-891e-5d2bd94b5b06.png">
+
+
+<br>
+
+### 📌 (6) 채용공고 삭제 API
+- **요구사항 : 특정 채용공고를 삭제할 수 있도록 설정**
+
+- **구현 과정**
+
+<img width="672" alt="image" src="https://user-images.githubusercontent.com/95380638/174000241-59951fe1-8f5d-41ee-a3ed-1c730363e4a4.png">
+
+- **views.py에서는 채용공고 상세 조회를 하는 JobPostingAPIView에서 DELETE 방식으로 요청이 왔을 때 채용공고를 삭제할 수 있도록 설정**
+  - DELETE 방식일 때 채용공고 pk를 받고 get_object_or_404로 모델 데이터가 있으면 가져오고 없으면 404 예외처리
+  - 해당 객체를 jobposting.delete() 이렇게 삭제시키기
+  - 삭제 이후 204코드 응답
+
+- **구현 결과**
+
+<img width="1214" alt="image" src="https://user-images.githubusercontent.com/95380638/174000719-40c49624-dbdf-4b1d-b21a-72afb4094dde.png">
+
