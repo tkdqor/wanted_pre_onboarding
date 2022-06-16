@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404     # 모델 객체가 없으면 404에러 발생시키기 위함
 from rest_framework.response import Response
-from .models import Company, JobPosting
+from .models import Company, JobPosting, ApplicationStatus
 from .serializers import JobPostingModelSerializer, JobPostingDetailSerializer, \
 JobPostingCreateSerializer, JobPostingUpdateSerializer, UserApplySerializer, UserApplyCreateSerializer 
 # serializers.py에서 정의한 Serializer 클래스 import
@@ -65,10 +65,11 @@ class JobPostingAPIView(APIView):
 # 사용자 채용공고 현황 View
 class UserApplyAPIView(APIView):
     def get(self, request):
+        # 사용자가 로그인 되었을 경우에만 해당 API 데이터 보여주기
         if request.user.is_authenticated:
-            user = request.user
-            jobpostings = JobPosting.objects.filter(user=user)
-            serializer = UserApplySerializer(jobpostings, many=True)
+            applicant = request.user
+            applicationStatus = ApplicationStatus.objects.filter(applicant_id=applicant.id) # 로그인된 사용자의 id로 필터링하기
+            serializer = UserApplySerializer(applicationStatus, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)    

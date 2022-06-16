@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from .models import Company, JobPosting
+from .models import Company, JobPosting, ApplicationStatus
 
 
 
@@ -62,22 +62,24 @@ class JobPostingUpdateSerializer(serializers.ModelSerializer):
 
 # 사용자 채용공고 현황 Serializer
 class UserApplySerializer(serializers.ModelSerializer):
+    # model에 정의한 필드 이름을 한글화 
+    채용공고_id = serializers.IntegerField(source='jobposting_status_id')
+    사용자_id = serializers.IntegerField(source='applicant_id') 
 
     class Meta:
-        model = JobPosting
-        fields = '__all__'
+        model = ApplicationStatus
+        fields = ('채용공고_id', '사용자_id')
 
 
 # 사용자 채용공고 지원 Serializer
 class UserApplyCreateSerializer(serializers.ModelSerializer):
     # model에 정의한 필드 이름을 한글화 
-    채용공고_id = serializers.CharField(source='id')
-    사용자_id = serializers.IntegerField(source='user_id') 
+    채용공고_id = serializers.IntegerField(source='jobposting_status_id')
+    사용자_id = serializers.IntegerField(source='applicant_id') 
 
     class Meta:
-        model = JobPosting
+        model = ApplicationStatus
         fields = ('채용공고_id', '사용자_id')
 
 
 
-# =====> 지원내역 모델을 만들생각을 해보자!!!
