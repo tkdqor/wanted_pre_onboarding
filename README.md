@@ -7,7 +7,7 @@
   - [채용공고 전체 목록 조회 API](#-채용공고-전체-목록-조회-api)
   - [채용공고 전체 목록 조회 API에서 검색 기능 구현](#-채용공고-전체-목록-조회-api에서-검색-기능-구현)
   - [채용공고 등록 API](#-채용공고-등록-api)
-  - [채용공고 상세 페이지 API](#-채용공고-상세-페이지-api)
+  - [채용공고 상세 페이지 API 및 해당 회사의 다른 채용공고 확인 기능 구현](#-채용공고-상세-페이지-api-및-해당-회사의-다른-채용공고-확인-기능-구현)
   - [채용공고 수정 API](#-채용공고-수정-api)
   - [채용공고 삭제 API](#-채용공고-삭제-api)
   - [채용공고 지원 API](#-채용공고-지원-api)
@@ -18,7 +18,7 @@
 
 ## 📌 모델링 및 설정 
 - **wanted라는 이름의 프로젝트를 가상환경에서 시작하고 employment라는 이름의 App 생성 / RDBMS는 django 기본인 sqlite3로 활용**
-<img width="1026" alt="image" src="https://user-images.githubusercontent.com/95380638/174075249-bb46631d-3b6c-42d8-874d-8015af5d7f2c.png">
+<img width="1071" alt="image" src="https://user-images.githubusercontent.com/95380638/174308623-580d4861-cbeb-4920-80b2-55e33abd2654.png">
 
 - **models.py에서 Company와 JobPosting이라는 이름으로 각각 회사와 채용공고에 해당하는 모델 생성, django 기본 모델인 User로 사용자 모델 대체. ApplicationStatus라는 모델로 채용공고 지원 내역 모델 생성**
   - Company 모델과 JobPosting 모델은 1:N 관계로 설정
@@ -165,7 +165,7 @@ sqlparse            0.4.2
 
 <br>
 
-### 📌 채용공고 상세 페이지 API
+### 📌 채용공고 상세 페이지 API 및 해당 회사의 다른 채용공고 확인 기능 구현
 ```python
 {
   "채용공고_id": 채용공고_id,
@@ -179,15 +179,24 @@ sqlparse            0.4.2
   "회사가올린다른채용공고":[채용공고_id, 채용공고_id, ..] # id List (선택사항 및 가산점요소).
 }
 ```
-- **요구사항 : 특정 채용공고에 대한 상세 페이지를 요청했을 때, 위와 같이 JSON 형태의 데이터를 확인할 수 있도록 설정 / 채용내용도 추가로 확인하도록 설정**
+- **요구사항 : 특정 채용공고에 대한 상세 페이지를 요청했을 때, 위와 같이 JSON 형태의 데이터를 확인할 수 있도록 설정 / 채용내용도 추가로 확인하도록 설정 / 해당 회사가 올린 다른 채용공고 id값도 확인할 수 있도록 설정**
 
 - **구현 과정**
-<img width="743" alt="image" src="https://user-images.githubusercontent.com/95380638/174089893-9b761aa0-fbe1-43f6-8e4c-f567cfaa0e4a.png">
+<img width="852" alt="image" src="https://user-images.githubusercontent.com/95380638/174306922-4d3c80ec-629f-4d49-9d42-018ba3aa7853.png">
+
+<img width="714" alt="image" src="https://user-images.githubusercontent.com/95380638/174307080-1309cf31-d1fd-493f-95b0-821350eb4784.png">
 
 - **serializers.py에서 채용공고 상세 페이지를 확인하기 위한 JobPostingDetailSerializer 생성**
   - 전체 목록과 다르게 content 필드인 채용내용 필드를 추가해서 확인할 수 있도록 설정
   - CompanySerializer가 JobPostingModelSerializer 내부에 들어올 수 있게 to_representation 메서드 override 하기
     - 여기서도 CompanySerializer 관련 데이터를 '채용회사'라는 이름으로 설정 
+
+- **해당 회사가 올린 다른 채용공고 id값을 확인할 수 있도록 기존의 하나였던 CompanySerializer를 목록 조회 연결 CompanySerializer와 상세 조회 연결
+CompanyDetailSerializer 이렇게 2개로 변경**
+  - CompanyDetailSerializer에서는 models.py의 JobPosting 모델에서 정의한 Company 모델과의 related_name인 company_jobposting를 이용해서 역참조 진행
+  - 채용공고 상세 조회 JobPostingDetailSerializer에서 Nested Serializer로 CompanyDetailSerializer 설정
+  - **해당 회사의 id값과 1:N관계에 있는 JobPosting 객체들에게 역참조로 접근해서 요구사항인 리스트 형태가 아닌 QuerySet 형태로 구현하게됨**
+
 
 <img width="685" alt="image" src="https://user-images.githubusercontent.com/95380638/173998221-cb7feb46-f093-4d65-ad06-dfea8c864fa2.png">
 
@@ -199,7 +208,7 @@ sqlparse            0.4.2
 <br>
 
 - **구현 결과**
-<img width="1217" alt="image" src="https://user-images.githubusercontent.com/95380638/174090744-bf7cbebc-dcba-4928-8e63-a88e42327ba3.png">
+<img width="1207" alt="image" src="https://user-images.githubusercontent.com/95380638/174307298-2a33d90c-652a-4f05-a85f-86f8d446c2f1.png">
 
 <br>
 
