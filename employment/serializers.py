@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer
 from .models import Company, JobPosting, ApplicationStatus
 
 
-# 회사와 관련된 Serializer
+# 회사와 관련된 Serializer - 채용공고 전체 목록 조회 Serializer와 연결
 class CompanySerializer(serializers.ModelSerializer):
     # model에 정의한 필드 이름을 한글화
     회사명 = serializers.CharField(source='name')
@@ -13,6 +13,20 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = ('회사명', '국가', '지역')
+
+
+# 회사와 관련된 Serializer - 채용공고 상세 조회 Serializer와 연결
+class CompanyDetailSerializer(serializers.ModelSerializer):
+    # model에 정의한 필드 이름을 한글화
+    회사명 = serializers.CharField(source='name')
+    국가 = serializers.CharField(source='country')
+    지역 = serializers.CharField(source='region')
+    # models.py의 JobPosting 모델에서 정의한 Company 모델과의 related_name인 company_jobposting를 이용해서 역참조하기
+    회사가올린다른채용공고 = serializers.CharField(source='company_jobposting.all') 
+
+    class Meta:
+        model = Company
+        fields = ('회사명', '국가', '지역', '회사가올린다른채용공고')
 
 
 # 채용공고 전체 목록 조회 Serializer
@@ -52,7 +66,7 @@ class JobPostingDetailSerializer(serializers.ModelSerializer):
     # Nested Serializer 생성 - JobPostingDetailSerializer 안에 또 다른 CompanySerializer를 중첩시키기
     def to_representation(self, instance):                            
         response = super().to_representation(instance)
-        response['채용회사'] = CompanySerializer(instance.company).data 
+        response['채용회사'] = CompanyDetailSerializer(instance.company).data 
         return response
 
 

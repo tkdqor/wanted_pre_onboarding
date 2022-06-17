@@ -27,6 +27,9 @@ class JobPosting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
 
+    def __str__(self):
+        return f'{self.id}'
+
 
 # 사용자가 지원한 채용공고 지원내역 모델
 class ApplicationStatus(models.Model):
