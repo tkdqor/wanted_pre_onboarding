@@ -1,10 +1,22 @@
 # 프리온보딩 백엔드 코스 선발 과제
 
+## 📖 **Contents**
+- [모델링 및 설정](#-모델링-및-설정) 
+- [Setup 과정](#-setup-과정)
+- [요구사항 및 구현 과정](#-요구사항-및-구현-과정)
+  - [채용공고 전체 목록 조회 API](#-채용공고-전체-목록-조회-api)
+  - [채용공고 전체 목록 조회 API에서 검색 기능 구현](#-채용공고-전체-목록-조회-api에서-검색-기능-구현)
+  - [채용공고 등록 API](#-채용공고-등록-api)
+  - [채용공고 상세 페이지 API](#-채용공고-상세-페이지-api)
+  - [채용공고 수정 API](#-채용공고-수정-api)
+  - [채용공고 삭제 API](#-채용공고-삭제-api)
+  - [채용공고 지원 API](#-채용공고-지원-api)
+- [Postman API 문서](#-postman-api-문서)
+
+
 <br>
 
-## 요구사항 및 구현 과정
-
-### 📌 초기 모델링 및 설정 
+## 📌 모델링 및 설정 
 - **wanted라는 이름의 프로젝트를 가상환경에서 시작하고 employment라는 이름의 App 생성 / RDBMS는 django 기본인 sqlite3로 활용**
 <img width="1026" alt="image" src="https://user-images.githubusercontent.com/95380638/174075249-bb46631d-3b6c-42d8-874d-8015af5d7f2c.png">
 
@@ -23,7 +35,7 @@
 
 <br>
 
-### 📌 Setup 과정 
+## 📌 Setup 과정 
 ```terminal
 pip install -r requirements.txt
 ```
@@ -47,7 +59,9 @@ sqlparse            0.4.2
 
 <br>
 
-### 📌 (1) 채용공고 전체 목록 조회 API
+## 📌 요구사항 및 구현 과정
+
+### 📌 채용공고 전체 목록 조회 API
 ```python
 [
 	{
@@ -74,12 +88,13 @@ sqlparse            0.4.2
 - **요구사항 : 채용공고 목록을 위와 같은 JSON 형태의 데이터로 확인할 수 있도록 설정**
 
 - **구현 과정** 
-<img width="712" alt="image" src="https://user-images.githubusercontent.com/95380638/173993698-595b580a-25e2-4462-8f04-2cfe4833a5fd.png">
+<img width="876" alt="image" src="https://user-images.githubusercontent.com/95380638/174088914-ff7018e2-7ffe-4ea5-b5ec-7f01881df0f2.png">
 
 - **employment App 내부에 serializers.py 파일을 생성하고 채용공고 전체 목록을 조회하기 위한 JobPostingModelSerializer를 생성** 
   - serializer 필드를 자동으로 설정해주는 ModelSerializer를 상속받아 진행
 - models.py에 설정한 필드 이름이 아닌 한글명으로 사용하기 위해 Serializer 내부에 새로운 필드 설정
-- depth = 1 코드를 추가해서 Company 모델과 JobPosting 모델이 1:N관계이므로 관련된 Company 모델 데이터 보여주기
+- 회사와 관련된 Serializer인 CompanySerializer도 생성해서 JobPostingModelSerializer 내부에 들어올 수 있게 to_representation 메서드 override 하기
+  - 여기서 CompanySerializer 관련 데이터를 '채용회사'라는 이름으로 설정 
 
 <img width="939" alt="image" src="https://user-images.githubusercontent.com/95380638/173994448-11707921-4008-4718-ab8a-9a4741c7fbd2.png">
 
@@ -89,13 +104,14 @@ sqlparse            0.4.2
 
 - **urls.py에서 채용공고 전체 조회하기 위해 jobpostings/ 라는 URL 설정**
 
-- **구현 결과**
+<br>
 
-<img width="1176" alt="image" src="https://user-images.githubusercontent.com/95380638/173994953-75b3cb7a-bbc8-4ce2-b880-485f34df7f8a.png">
+- **구현 결과**
+<img width="1209" alt="image" src="https://user-images.githubusercontent.com/95380638/174089506-e773450e-8b36-4f59-a28f-224b53269d5f.png">
 
 <br>
 
-### 📌 (2) 채용공고 전체 목록 조회 API에서 검색 기능 구현
+### 📌 채용공고 전체 목록 조회 API에서 검색 기능 구현
 - **요구사항 : some/url?search=원티드 와 같이 Request URL에 ?search= 를 입력한 뒤 검색하고자 하는 키워드를 입력하고 요청하면 해당 내용이 JSON 형태의 데이터로 보여줄 수 있도록 설정**
 
 - **구현 과정**
@@ -106,13 +122,15 @@ sqlparse            0.4.2
   - 만약 해당 변수가 있다면, Q 객체로 검색된 키워드 search_keyword를 OR 조건으로 필터링
   - 회사 이름, 국가, 지역과 포지션, 보상금, 기술 필드에 다 OR 조건으로 걸리도록 설정
 
+<br>
+
 - **구현 결과**
 
 <img width="1179" alt="image" src="https://user-images.githubusercontent.com/95380638/173995923-54604052-5ac7-4da3-a736-309b283de8fe.png">
 
 <br>
 
-### 📌 (3) 채용공고 등록 API
+### 📌 채용공고 등록 API
 ```python
 {
   "회사_id":회사_id,
@@ -139,13 +157,15 @@ sqlparse            0.4.2
   - serializer에서 데이터에 대한 유효성 검증 이후 통과되면 저장, 그리고 201번 코드를 응답
   - 만약 실패했다면 400번 코드로 예외처리 진행
 
+<br>
+
 - **구현 결과**
 
 <img width="1185" alt="image" src="https://user-images.githubusercontent.com/95380638/173997252-198574f9-bad7-46b2-ba15-e80c89b12cf1.png">
 
 <br>
 
-### 📌 (4) 채용공고 상세 페이지 API
+### 📌 채용공고 상세 페이지 API
 ```python
 {
   "채용공고_id": 채용공고_id,
@@ -162,12 +182,12 @@ sqlparse            0.4.2
 - **요구사항 : 특정 채용공고에 대한 상세 페이지를 요청했을 때, 위와 같이 JSON 형태의 데이터를 확인할 수 있도록 설정 / 채용내용도 추가로 확인하도록 설정**
 
 - **구현 과정**
-
-<img width="709" alt="image" src="https://user-images.githubusercontent.com/95380638/173997975-ec077d56-fe16-4948-8a8b-f61fb8b5c642.png">
+<img width="743" alt="image" src="https://user-images.githubusercontent.com/95380638/174089893-9b761aa0-fbe1-43f6-8e4c-f567cfaa0e4a.png">
 
 - **serializers.py에서 채용공고 상세 페이지를 확인하기 위한 JobPostingDetailSerializer 생성**
   - 전체 목록과 다르게 content 필드인 채용내용 필드를 추가해서 확인할 수 있도록 설정
-  - class Meta에 depth = 1를 설정해서 1:N관계로 있는 Company 모델 데이터 보여주기 
+  - CompanySerializer가 JobPostingModelSerializer 내부에 들어올 수 있게 to_representation 메서드 override 하기
+    - 여기서도 CompanySerializer 관련 데이터를 '채용회사'라는 이름으로 설정 
 
 <img width="685" alt="image" src="https://user-images.githubusercontent.com/95380638/173998221-cb7feb46-f093-4d65-ad06-dfea8c864fa2.png">
 
@@ -176,13 +196,14 @@ sqlparse            0.4.2
 
 - **urls.py에서는 jobpostings/<int:pk>/ 로 URL를 설정해서 채용공고 상세 조회 및 추후에 수정과 삭제시에도 pk를 받도록 설정**
 
-- **구현 결과**
+<br>
 
-<img width="1194" alt="image" src="https://user-images.githubusercontent.com/95380638/173998398-69641243-0c76-4892-a7c9-30ae8317cea3.png">
+- **구현 결과**
+<img width="1217" alt="image" src="https://user-images.githubusercontent.com/95380638/174090744-bf7cbebc-dcba-4928-8e63-a88e42327ba3.png">
 
 <br>
 
-### 📌 (5) 채용공고 수정 API
+### 📌 채용공고 수정 API
 - **요구사항 : 채용공고 상세 페이지에서 회사 ID를 제외한 다른 필드 값을 JSON 형태의 데이터로 수정할 수 있도록 설정**
 
 - **구현 과정**
@@ -199,6 +220,8 @@ sqlparse            0.4.2
   - 받은 데이터를 JobPostingUpdateSerializer에 보내주고 유효성 검사 진행
   - 성공하면 데이터를 저장하고, 실패하면 400번 예외처리 하게끔 설정
 
+<br>
+
 - **구현 결과**
 
 <img width="1199" alt="image" src="https://user-images.githubusercontent.com/95380638/173999691-8ae7ac12-24c2-4b24-891e-5d2bd94b5b06.png">
@@ -206,7 +229,7 @@ sqlparse            0.4.2
 
 <br>
 
-### 📌 (6) 채용공고 삭제 API
+### 📌 채용공고 삭제 API
 - **요구사항 : 특정 채용공고를 삭제할 수 있도록 설정**
 
 - **구현 과정**
@@ -218,13 +241,15 @@ sqlparse            0.4.2
   - 해당 객체를 jobposting.delete() 이렇게 삭제시키기
   - 삭제 이후 204코드 응답
 
+<br>
+
 - **구현 결과**
 
 <img width="1214" alt="image" src="https://user-images.githubusercontent.com/95380638/174000719-40c49624-dbdf-4b1d-b21a-72afb4094dde.png">
 
 <br>
 
-### 📌 (7) 채용공고 지원 API
+### 📌 채용공고 지원 API
 - **요구사항 : 사용자가 원하는 특정 채용공고에 지원하는 JSON 형태의 id 값을 넣으면 채용공고 id와 사용자 id값을 함께 볼 수 있도록 설정**
 
 - **구현 과정**
@@ -250,6 +275,8 @@ sqlparse            0.4.2
 
 - **urls.py에서는 jobpostings/user/ 라는 URL로 설정**
 
+<br>
+
 - **구현 결과**
 
 <img width="1234" alt="image" src="https://user-images.githubusercontent.com/95380638/174074526-51c08194-0911-40c4-aa24-b29c19fca148.png">
@@ -259,4 +286,17 @@ sqlparse            0.4.2
 <img width="1217" alt="image" src="https://user-images.githubusercontent.com/95380638/174074787-c4a6771b-6932-4263-b0db-4ebb0601562b.png">
 
 - **JSON 데이터로 입력하면 채용공고 지원하기**
+
+<br>
+
+## 📌 Postman API 문서
+- [Postman API 문서](https://documenter.getpostman.com/view/20920872/UzBjtU4c)
+
+- **Postman API 문서 예시**
+<img width="1434" alt="image" src="https://user-images.githubusercontent.com/95380638/174248014-cf726f11-8207-4352-874b-02cb76d52b22.png">
+
+- **Postman을 사용해서 실제 클라이언트 입장에서 API가 작동하는지 검토**
+- jobpostings - Apply/List는 로그인 정보가 필요
+
+
 
