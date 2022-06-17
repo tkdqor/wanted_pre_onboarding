@@ -11,6 +11,7 @@
   - [채용공고 수정 API](#-채용공고-수정-api)
   - [채용공고 삭제 API](#-채용공고-삭제-api)
   - [채용공고 지원 API](#-채용공고-지원-api)
+- [Postman API 문서](#-postman-api-문서)
 
 
 <br>
@@ -285,4 +286,17 @@ sqlparse            0.4.2
 <img width="1217" alt="image" src="https://user-images.githubusercontent.com/95380638/174074787-c4a6771b-6932-4263-b0db-4ebb0601562b.png">
 
 - **JSON 데이터로 입력하면 채용공고 지원하기**
+
+<br>
+
+## 📌 Postman API 문서
+- [Postman API 문서](https://documenter.getpostman.com/view/20920872/UzBjtU4c)
+
+- **Postman API 문서 예시**
+<img width="1434" alt="image" src="https://user-images.githubusercontent.com/95380638/174248014-cf726f11-8207-4352-874b-02cb76d52b22.png">
+
+- **Postman을 사용해서 실제 클라이언트 입장에서 API가 작동하는지 검토**
+- jobpostings - Apply/List는 로그인 정보가 필요
+
+
 
